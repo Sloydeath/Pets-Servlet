@@ -33,7 +33,7 @@ public abstract class Pet {
     private String name;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "owner_id")
     private Person person;
 

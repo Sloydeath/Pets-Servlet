@@ -15,7 +15,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.LAZY;
 
@@ -32,6 +33,6 @@ public class Person {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "person", cascade = {MERGE, REMOVE}, fetch = LAZY)
+    @OneToMany(mappedBy = "person", cascade = {ALL, REMOVE}, fetch = LAZY)
     private List<Pet> pets;
 }
