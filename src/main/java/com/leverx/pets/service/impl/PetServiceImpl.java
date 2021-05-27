@@ -4,15 +4,15 @@ import com.leverx.pets.model.Pet;
 import com.leverx.pets.repository.PetRepository;
 import com.leverx.pets.service.PetService;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 
-@ApplicationScoped
 public class PetServiceImpl implements PetService {
 
-    @Inject
-    private PetRepository petRepository;
+    private final PetRepository petRepository;
+
+    public PetServiceImpl(PetRepository petRepository) {
+        this.petRepository = petRepository;
+    }
 
     @Override
     public void createPet(Pet pet) {

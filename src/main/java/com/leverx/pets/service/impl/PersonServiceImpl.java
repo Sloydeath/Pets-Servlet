@@ -1,18 +1,21 @@
 package com.leverx.pets.service.impl;
 
+import com.leverx.pets.config.HibernateSessionFactoryUtil;
 import com.leverx.pets.model.Person;
 import com.leverx.pets.repository.PersonRepository;
 import com.leverx.pets.service.PersonService;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 
-@ApplicationScoped
 public class PersonServiceImpl implements PersonService {
 
-    @Inject
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
+
+    public PersonServiceImpl(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
     @Override
     public void createPerson(Person person) {
