@@ -12,5 +12,6 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue(value = "CAT")
-public class Cat extends Pet{
+public class Cat extends Pet {
+
 }
