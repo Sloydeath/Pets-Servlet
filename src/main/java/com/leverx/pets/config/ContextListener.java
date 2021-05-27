@@ -1,5 +1,6 @@
 package com.leverx.pets.config;
 
+import com.leverx.pets.controller.servlet.PersonServlet;
 import com.leverx.pets.repository.PersonRepository;
 import com.leverx.pets.repository.PetRepository;
 import com.leverx.pets.repository.impl.PersonRepositoryImpl;
@@ -19,6 +20,7 @@ public class ContextListener implements ServletContextListener {
     private static final Logger log = Logger.getLogger(ContextListener.class);
     private PersonRepository personRepository;
     private PetRepository petRepository;
+
     private PersonService personService;
     private PetService petService;
 
