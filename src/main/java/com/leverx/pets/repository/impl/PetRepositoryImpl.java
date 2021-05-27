@@ -1,12 +1,10 @@
 package com.leverx.pets.repository.impl;
 
-import com.leverx.pets.config.HibernateSessionFactoryUtil;
 import com.leverx.pets.model.Pet;
 import com.leverx.pets.repository.PetRepository;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -33,14 +31,13 @@ public class PetRepositoryImpl implements PetRepository {
     }
 
     @Override
-    public List getAll() {
+    public List<Pet> getAll() {
         Transaction transaction = null;
-        List pets = null;
+        List<Pet> pets = null;
         final String hql = "FROM Pet P ORDER BY P.id";
         try (Session session = getSession()) {
             transaction = session.beginTransaction();
-            Query query = session.createQuery(hql);
-            pets = query.list();
+            pets = session.createQuery(hql, Pet.class).getResultList();
         } catch (Exception ex) {
             log.error("Exception while executing getAll method in PetRepositoryImpl: " + ex);
             if (transaction != null) {

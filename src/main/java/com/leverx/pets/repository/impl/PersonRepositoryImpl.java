@@ -5,7 +5,6 @@ import com.leverx.pets.repository.PersonRepository;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -31,14 +30,13 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public List getAll() {
+    public List<Person> getAll() {
         Transaction transaction = null;
-        List people = null;
+        List<Person> people = null;
         final String hql = "FROM Person P ORDER BY P.id";
         try (Session session = getSession()) {
             transaction = session.beginTransaction();
-            Query query = session.createQuery(hql);
-            people = query.list();
+            people = session.createQuery(hql, Person.class).getResultList();
         } catch (Exception ex) {
             log.error("Exception while executing getAll method in PersonRepositoryImpl: " + ex);
             if (transaction != null) {
