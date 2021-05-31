@@ -2,89 +2,42 @@ package com.leverx.pets.repository.impl;
 
 import com.leverx.pets.model.Person;
 import com.leverx.pets.repository.PersonRepository;
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.leverx.pets.config.HibernateSessionFactoryUtil.getSession;
-
 public class PersonRepositoryImpl implements PersonRepository {
-    private static final Logger log = Logger.getLogger(PersonRepositoryImpl.class);
+    private final EntityManager entityManager;
+
+    public PersonRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     public void create(Person person) {
-        Transaction transaction = null;
-
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            session.save(person);
-            transaction.commit();
-        } catch (Exception ex) {
-            log.error("Exception while executing create method in PersonRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
+        entityManager.persist(person);
     }
 
     @Override
     public List<Person> getAll() {
-        Transaction transaction = null;
-        List<Person> people = null;
-        final String hql = "FROM Person P ORDER BY P.id";
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            people = session.createQuery(hql, Person.class).getResultList();
-        } catch (Exception ex) {
-            log.error("Exception while executing getAll method in PersonRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
-        return people;
+        return entityManager.createQuery("FROM Person", Person.class).getResultList();
     }
 
     @Override
     public Person getById(Long id) {
-        try (Session session = getSession()) {
-            return session.get(Person.class, id);
-        }
+        return entityManager.find(Person.class, id);
     }
 
     @Override
     public void delete(Long id) {
-        Transaction transaction = null;
-
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            Person person = session.get(Person.class, id);
-            if (person != null) {
-                session.delete(person);
-            }
-            transaction.commit();
-        } catch (Exception ex) {
-            log.error("Exception while executing delete method in PersonRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
+        Person person = getById(id);
+        entityManager.remove(person);
     }
 
     @Override
     public void update(Person person) {
-        Transaction transaction = null;
-
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            session.update(person);
-            transaction.commit();
-        } catch (Exception ex) {
-            log.error("Exception while executing update method in PersonRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
+        Person currentPerson = getById(person.getId());
+        currentPerson.setName(person.getName());
+        currentPerson.setPets(person.getPets());
     }
 }

@@ -2,13 +2,13 @@ package com.leverx.pets.controller.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leverx.pets.dto.PetDto;
-import com.leverx.pets.model.Cat;
-import com.leverx.pets.model.Dog;
+import com.leverx.pets.model.pet.Cat;
+import com.leverx.pets.model.pet.Dog;
 import com.leverx.pets.model.Person;
-import com.leverx.pets.model.Pet;
+import com.leverx.pets.model.pet.Pet;
+import com.leverx.pets.model.pet.UnknownPet;
 import com.leverx.pets.service.PersonService;
 import com.leverx.pets.service.PetService;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebServlet;
@@ -19,10 +19,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-import static com.leverx.pets.model.PetType.CAT;
 import static com.leverx.pets.util.JsonUtil.readJsonData;
 import static com.leverx.pets.util.JsonUtil.sendJsonResponse;
 import static com.leverx.pets.util.UrlParser.getPathInfo;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 @WebServlet(value = "/pets/*", name = "PetServlet")
 public class PetServlet extends HttpServlet {
@@ -53,11 +55,11 @@ public class PetServlet extends HttpServlet {
                 sendJsonResponse(jsonPet, response);
             }
             else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(SC_NOT_FOUND);
             }
         }
         else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(SC_NOT_FOUND);
         }
     }
 
@@ -71,25 +73,30 @@ public class PetServlet extends HttpServlet {
             String json = readJsonData(reader);
             PetDto petDto = objectMapper.readValue(json, PetDto.class);
             Pet pet;
-            if (CAT.equals(petDto.getPetType())) {
-                pet = new Cat();
-            }
-            else {
-                pet = new Dog();
+            switch (petDto.getPetType()) {
+                case CAT:
+                    pet = new Cat();
+                    break;
+                case DOG:
+                    pet = new Dog();
+                    break;
+                default:
+                    pet = new UnknownPet();
+                    break;
             }
             Person person = personService.getPersonById(Long.parseLong(url.get(1)));
             if (person != null) {
                 pet.setName(petDto.getName());
                 pet.setPerson(person);
+                petService.createPet(pet);
+                response.setStatus(SC_OK);
             }
             else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(SC_NOT_FOUND);
             }
-            petService.createPet(pet);
-            response.setStatus(HttpServletResponse.SC_OK);
         }
         else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendError(SC_BAD_REQUEST);
         }
     }
 
@@ -104,14 +111,14 @@ public class PetServlet extends HttpServlet {
             if (pet != null) {
                 pet.setName(petDto.getName());
                 petService.updatePet(pet);
-                response.setStatus(HttpServletResponse.SC_OK);
+                response.setStatus(SC_OK);
             }
             else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(SC_NOT_FOUND);
             }
         }
         else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendError(SC_BAD_REQUEST);
         }
     }
 
@@ -121,10 +128,10 @@ public class PetServlet extends HttpServlet {
         List<String> url = getPathInfo(request);
         if (url != null && url.size() == 1) {
             petService.deletePet(Long.parseLong(url.get(0)));
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(SC_OK);
         }
         else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendError(SC_BAD_REQUEST);
         }
     }
 }

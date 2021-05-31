@@ -1,91 +1,44 @@
 package com.leverx.pets.repository.impl;
 
-import com.leverx.pets.model.Pet;
+import com.leverx.pets.model.pet.Pet;
 import com.leverx.pets.repository.PetRepository;
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
+import javax.persistence.EntityManager;
 import java.util.List;
-
-import static com.leverx.pets.config.HibernateSessionFactoryUtil.*;
 
 public class PetRepositoryImpl implements PetRepository {
 
-    private static final Logger log = Logger.getLogger(PetRepositoryImpl.class);
+    private final EntityManager entityManager;
+
+    public PetRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     public void create(Pet pet) {
-        Transaction transaction = null;
-
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            session.save(pet);
-            transaction.commit();
-        } catch (Exception ex) {
-            log.error("Exception while executing create method in PetRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
+        entityManager.persist(pet);
     }
 
     @Override
     public List<Pet> getAll() {
-        Transaction transaction = null;
-        List<Pet> pets = null;
-        final String hql = "FROM Pet P ORDER BY P.id";
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            pets = session.createQuery(hql, Pet.class).getResultList();
-        } catch (Exception ex) {
-            log.error("Exception while executing getAll method in PetRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
-        return pets;
+       return entityManager.createQuery("FROM Pet", Pet.class).getResultList();
     }
 
     @Override
     public Pet getById(Long id) {
-        try (Session session = getSession()) {
-            return session.get(Pet.class, id);
-        }
+        return entityManager.find(Pet.class, id);
     }
 
     @Override
     public void delete(Long id) {
-        Transaction transaction = null;
-
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            Pet pet = session.get(Pet.class, id);
-            if (pet != null) {
-                session.delete(pet);
-            }
-            transaction.commit();
-        } catch (Exception ex) {
-            log.error("Exception while executing delete method in PetRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
+        Pet pet = getById(id);
+        entityManager.remove(pet);
     }
 
     @Override
     public void update(Pet pet) {
-        Transaction transaction = null;
-
-        try (Session session = getSession()) {
-            transaction = session.beginTransaction();
-            session.update(pet);
-            transaction.commit();
-        } catch (Exception ex) {
-            log.error("Exception while executing update method in PetRepositoryImpl: " + ex);
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        }
+        Pet currentPet = getById(pet.getId());
+        currentPet.setName(pet.getName());
+        currentPet.setPerson(pet.getPerson());
     }
 }

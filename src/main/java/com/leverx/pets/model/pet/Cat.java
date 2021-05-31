@@ -1,4 +1,4 @@
-package com.leverx.pets.model;
+package com.leverx.pets.model.pet;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +11,7 @@ import javax.persistence.Entity;
 @Data
 @NoArgsConstructor
 @Entity
-@DiscriminatorValue(value = "DOG")
-public class Dog extends Pet {
+@DiscriminatorValue(value = "CAT")
+public class Cat extends Pet {
 
 }

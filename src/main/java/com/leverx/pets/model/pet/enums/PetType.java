@@ -1,8 +1,9 @@
-package com.leverx.pets.model;
+package com.leverx.pets.model.pet.enums;
 
 public enum PetType {
     CAT("CAT"),
-    DOG("DOG");
+    DOG("DOG"),
+    UNKNOWN("UNKNOWN");
 
     private final String type;
 

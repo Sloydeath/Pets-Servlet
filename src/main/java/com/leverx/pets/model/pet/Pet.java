@@ -1,5 +1,6 @@
-package com.leverx.pets.model;
+package com.leverx.pets.model.pet;
 
+import com.leverx.pets.model.Person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,7 @@ public abstract class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @Column(name = "name")
     private String name;
 

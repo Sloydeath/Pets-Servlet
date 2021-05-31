@@ -1,6 +1,6 @@
 package com.leverx.pets.repository;
 
-import com.leverx.pets.model.Pet;
+import com.leverx.pets.model.pet.Pet;
 
 import java.util.List;
 
