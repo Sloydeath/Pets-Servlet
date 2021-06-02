@@ -12,7 +12,7 @@
 
     <listener>
         <listener-class>
-            com.leverx.pets.config.ContextListener
+            com.leverx.pets.config.ApplicationContext
         </listener-class>
     </listener>
 </web-app>

@@ -29,9 +29,13 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         Person person = getById(id);
-        entityManager.remove(person);
+        if (person != null) {
+            entityManager.remove(person);
+            return true;
+        }
+        return false;
     }
 
     @Override

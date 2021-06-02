@@ -30,9 +30,15 @@ public class PetRepositoryImpl implements PetRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         Pet pet = getById(id);
-        entityManager.remove(pet);
+        if (pet != null) {
+            entityManager.remove(pet);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @Override

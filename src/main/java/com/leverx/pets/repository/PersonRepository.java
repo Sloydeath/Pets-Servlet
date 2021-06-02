@@ -8,6 +8,6 @@ public interface PersonRepository {
     void create(Person person);
     List<Person> getAll();
     Person getById(Long id);
-    void delete(Long id);
+    boolean delete(Long id);
     void update(Person person);
 }

@@ -1,13 +1,5 @@
 package com.leverx.pets.controller.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leverx.pets.dto.PetDto;
-import com.leverx.pets.model.pet.Cat;
-import com.leverx.pets.model.pet.Dog;
-import com.leverx.pets.model.Person;
-import com.leverx.pets.model.pet.Pet;
-import com.leverx.pets.model.pet.UnknownPet;
-import com.leverx.pets.service.PersonService;
 import com.leverx.pets.service.PetService;
 
 import javax.servlet.ServletContext;
@@ -19,9 +11,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-import static com.leverx.pets.util.JsonUtil.readJsonData;
 import static com.leverx.pets.util.JsonUtil.sendJsonResponse;
+import static com.leverx.pets.util.StringConstantsUtil.DELIMITER;
+import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
 import static com.leverx.pets.util.UrlParser.getPathInfo;
+import static java.lang.Long.parseLong;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -29,30 +23,25 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @WebServlet(value = "/pets/*", name = "PetServlet")
 public class PetServlet extends HttpServlet {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private PetService petService;
-    private PersonService personService;
 
     @Override
     public void init() {
         ServletContext context = getServletContext();
         petService = (PetService) context.getAttribute(PetService.class.getName());
-        personService = (PersonService) context.getAttribute(PersonService.class.getName());
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-        if (url == null) {
-            List<Pet> pets = petService.getAllPets();
-            String jsonPeople = objectMapper.writeValueAsString(pets);
-            sendJsonResponse(jsonPeople, response);
+        if (!url.isEmpty() && DELIMITER.equals(url.get(0)) && url.size() == 1) {
+            String pets = petService.getAllPets();
+            sendJsonResponse(pets, response);
         }
-        else if (url.size() == 1) {
-            Pet pet = petService.getPetById(Long.parseLong(url.get(0)));
-            if (pet != null) {
-                String jsonPet = objectMapper.writeValueAsString(pet);
-                sendJsonResponse(jsonPet, response);
+        else if (url.size() == 2) {
+            String pet = petService.getPetById(parseLong(url.get(1)));
+            if (pet != null && !EMPTY.equals(pet)) {
+                sendJsonResponse(pet, response);
             }
             else {
                 response.sendError(SC_NOT_FOUND);
@@ -67,54 +56,32 @@ public class PetServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-
-        if (url != null && url.size() == 2) {
-            BufferedReader reader = request.getReader();
-            String json = readJsonData(reader);
-            PetDto petDto = objectMapper.readValue(json, PetDto.class);
-            Pet pet;
-            switch (petDto.getPetType()) {
-                case CAT:
-                    pet = new Cat();
-                    break;
-                case DOG:
-                    pet = new Dog();
-                    break;
-                default:
-                    pet = new UnknownPet();
-                    break;
-            }
-            Person person = personService.getPersonById(Long.parseLong(url.get(1)));
-            if (person != null) {
-                pet.setName(petDto.getName());
-                pet.setPerson(person);
-                petService.createPet(pet);
+        if (url.size() == 3) {
+            BufferedReader petJsonRequest = request.getReader();
+            boolean isCreate = petService.createPet(petJsonRequest, Long.parseLong(url.get(2)));
+            if (isCreate) {
                 response.setStatus(SC_OK);
             }
             else {
-                response.sendError(SC_NOT_FOUND);
+                response.setStatus(SC_BAD_REQUEST);
             }
         }
         else {
-            response.sendError(SC_BAD_REQUEST);
+            response.sendError(SC_NOT_FOUND);
         }
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-        if (url != null && url.size() == 1) {
-            BufferedReader reader = request.getReader();
-            String json = readJsonData(reader);
-            PetDto petDto = objectMapper.readValue(json, PetDto.class);
-            Pet pet = petService.getPetById(Long.parseLong(url.get(0)));
-            if (pet != null) {
-                pet.setName(petDto.getName());
-                petService.updatePet(pet);
+        if (url.size() == 2) {
+            BufferedReader petJsonRequest = request.getReader();
+            boolean isUpdate = petService.updatePet(petJsonRequest, parseLong(url.get(1)));
+            if (isUpdate) {
                 response.setStatus(SC_OK);
             }
             else {
-                response.sendError(SC_NOT_FOUND);
+                response.setStatus(SC_BAD_REQUEST);
             }
         }
         else {
@@ -126,9 +93,14 @@ public class PetServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-        if (url != null && url.size() == 1) {
-            petService.deletePet(Long.parseLong(url.get(0)));
-            response.setStatus(SC_OK);
+        if (url.size() == 2) {
+            boolean isDelete = petService.deletePet(parseLong(url.get(1)));
+            if (isDelete) {
+                response.setStatus(SC_OK);
+            }
+            else {
+                response.setStatus(SC_BAD_REQUEST);
+            }
         }
         else {
             response.sendError(SC_BAD_REQUEST);

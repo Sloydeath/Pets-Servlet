@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
@@ -35,14 +34,13 @@ public class Person {
 
     @JsonIgnore
     @OneToMany(mappedBy = "person", cascade = {ALL, REMOVE}, fetch = LAZY)
-    private List<Pet> pets = new ArrayList<>();
+    private List<Pet> pets;
 
     @Override
     public String toString() {
         return "{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", pets=" + pets +
                 '}';
     }
 }

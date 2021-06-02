@@ -1,13 +1,11 @@
 package com.leverx.pets.service;
 
-import com.leverx.pets.model.pet.Pet;
-
-import java.util.List;
+import java.io.BufferedReader;
 
 public interface PetService {
-    void createPet(Pet pet);
-    List<Pet> getAllPets();
-    Pet getPetById(Long id);
-    void deletePet(Long id);
-    void updatePet(Pet pet);
+    boolean createPet(BufferedReader pet, Long personId);
+    String getAllPets();
+    String getPetById(Long id);
+    boolean deletePet(Long id);
+    boolean updatePet(BufferedReader pet, Long id);
 }

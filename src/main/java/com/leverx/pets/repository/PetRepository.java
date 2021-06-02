@@ -8,6 +8,6 @@ public interface PetRepository {
     void create(Pet pet);
     List<Pet> getAll();
     Pet getById(Long id);
-    void delete(Long id);
+    boolean delete(Long id);
     void update(Pet pet);
 }

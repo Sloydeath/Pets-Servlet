@@ -1,7 +1,5 @@
 package com.leverx.pets.controller.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leverx.pets.model.Person;
 import com.leverx.pets.service.PersonService;
 
 import javax.servlet.ServletContext;
@@ -13,9 +11,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-import static com.leverx.pets.util.JsonUtil.readJsonData;
 import static com.leverx.pets.util.JsonUtil.sendJsonResponse;
+import static com.leverx.pets.util.StringConstantsUtil.DELIMITER;
+import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
 import static com.leverx.pets.util.UrlParser.getPathInfo;
+import static java.lang.Long.parseLong;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -23,7 +23,6 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @WebServlet(value = "/people/*", name = "PersonServlet")
 public class PersonServlet extends HttpServlet {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private PersonService personService;
 
     @Override
@@ -35,16 +34,14 @@ public class PersonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-        if (url == null) {
-            List<Person> people = personService.getAllPeople();
-            String jsonPeople = objectMapper.writeValueAsString(people);
-            sendJsonResponse(jsonPeople, response);
+        if (!url.isEmpty() && DELIMITER.equals(url.get(0)) && url.size() == 1) {
+            String people = personService.getAllPeople();
+            sendJsonResponse(people, response);
         }
-        else if (url.size() == 1) {
-            Person person = personService.getPersonById(Long.parseLong(url.get(0)));
-            if (person != null) {
-                String jsonPerson = objectMapper.writeValueAsString(person);
-                sendJsonResponse(jsonPerson, response);
+        else if (url.size() == 2) {
+            String person = personService.getPersonById(parseLong(url.get(1)));
+            if (person != null && !EMPTY.equals(person)) {
+                sendJsonResponse(person, response);
             }
             else {
                 response.sendError(SC_NOT_FOUND);
@@ -58,12 +55,15 @@ public class PersonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-        if (url == null) {
-            BufferedReader reader = request.getReader();
-            String json = readJsonData(reader);
-            Person person = objectMapper.readValue(json, Person.class);
-            personService.createPerson(person);
-            response.setStatus(SC_OK);
+        if (!url.isEmpty() && DELIMITER.equals(url.get(0)) && url.size() == 1) {
+            BufferedReader personJsonRequest = request.getReader();
+            boolean isCreate = personService.createPerson(personJsonRequest);
+            if (isCreate) {
+                response.setStatus(SC_OK);
+            }
+            else {
+                response.setStatus(SC_BAD_REQUEST);
+            }
         }
         else {
             response.sendError(SC_BAD_REQUEST);
@@ -73,18 +73,14 @@ public class PersonServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-        if (url != null && url.size() == 1) {
-            BufferedReader reader = request.getReader();
-            String json = readJsonData(reader);
-            Person newPerson = objectMapper.readValue(json, Person.class);
-            Person person = personService.getPersonById(Long.parseLong(url.get(0)));
-            if (person != null) {
-                person.setName(newPerson.getName());
-                personService.updatePerson(person);
+        if (url.size() == 2) {
+            BufferedReader personJsonRequest = request.getReader();
+            boolean isUpdate = personService.updatePerson(personJsonRequest, parseLong(url.get(1)));
+            if (isUpdate) {
                 response.setStatus(SC_OK);
             }
             else {
-                response.sendError(SC_NOT_FOUND);
+                response.setStatus(SC_BAD_REQUEST);
             }
         }
         else {
@@ -95,9 +91,14 @@ public class PersonServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> url = getPathInfo(request);
-        if (url != null && url.size() == 1) {
-            personService.deletePersonById(Long.parseLong(url.get(0)));
-            response.setStatus(SC_OK);
+        if (url.size() == 2) {
+            boolean isDelete = personService.deletePersonById(parseLong(url.get(1)));
+            if (isDelete) {
+                response.setStatus(SC_OK);
+            }
+            else {
+                response.setStatus(SC_BAD_REQUEST);
+            }
         }
         else {
             response.sendError(SC_BAD_REQUEST);
