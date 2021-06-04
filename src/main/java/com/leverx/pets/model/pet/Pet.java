@@ -1,5 +1,6 @@
 package com.leverx.pets.model.pet;
 
+import com.leverx.pets.annotations.ValidName;
 import com.leverx.pets.model.Person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,10 +19,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Data
+@Valid
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -35,12 +38,12 @@ public abstract class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @ValidName
     @Column(name = "name")
     private String name;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "owner_id")
     private Person person;
 

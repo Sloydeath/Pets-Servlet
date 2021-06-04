@@ -6,6 +6,8 @@ import com.leverx.pets.repository.PetRepository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static java.util.Objects.nonNull;
+
 public class PetRepositoryImpl implements PetRepository {
 
     private final EntityManager entityManager;
@@ -32,7 +34,7 @@ public class PetRepositoryImpl implements PetRepository {
     @Override
     public boolean delete(Long id) {
         Pet pet = getById(id);
-        if (pet != null) {
+        if (nonNull(pet)) {
             entityManager.remove(pet);
             return true;
         }

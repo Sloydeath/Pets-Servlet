@@ -2,6 +2,7 @@ package com.leverx.pets.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leverx.pets.dto.PersonDto;
+import com.leverx.pets.exception.EntityNotFoundException;
 import com.leverx.pets.model.Person;
 import com.leverx.pets.repository.PersonRepository;
 import com.leverx.pets.service.PersonService;
@@ -16,6 +17,8 @@ import java.util.List;
 import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
 import static com.leverx.pets.util.StringConstantsUtil.FALSE;
 import static com.leverx.pets.util.StringConstantsUtil.TRUE;
+import static com.leverx.pets.util.BeanValidator.validateBean;
+import static java.util.Objects.nonNull;
 
 
 public class PersonServiceImpl implements PersonService {
@@ -39,7 +42,7 @@ public class PersonServiceImpl implements PersonService {
         try {
             et.begin();
             PersonDto personDto = objectMapper.readValue(personJson, PersonDto.class);
-            validator.validate(personDto);
+            validateBean(personDto, validator);
             personRepository.create(objectMapper.convertValue(personDto, Person.class));
             et.commit();
             return TRUE;
@@ -72,7 +75,7 @@ public class PersonServiceImpl implements PersonService {
             et.begin();
             Person person = personRepository.getById(id);
             et.commit();
-            if (person != null) {
+            if (nonNull(person)) {
                 return objectMapper.writeValueAsString(person);
             }
             else {
@@ -106,15 +109,16 @@ public class PersonServiceImpl implements PersonService {
         try {
             et.begin();
             Person person = personRepository.getById(id);
-            if (person != null) {
+            if (nonNull(person)) {
                 PersonDto personDto = objectMapper.readValue(personJson, PersonDto.class);
+                validateBean(personDto, validator);
                 person.setName(personDto.getName());
                 personRepository.update(person);
                 et.commit();
                 return TRUE;
             }
             else {
-                throw new Exception("Person doesn't exist");
+                throw new EntityNotFoundException("Person doesn't exist");
             }
         } catch (Exception ex) {
             log.error("Exception while execution of updatePerson: " + ex);

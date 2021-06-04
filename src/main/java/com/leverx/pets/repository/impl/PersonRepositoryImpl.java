@@ -6,6 +6,8 @@ import com.leverx.pets.repository.PersonRepository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static java.util.Objects.nonNull;
+
 public class PersonRepositoryImpl implements PersonRepository {
     private final EntityManager entityManager;
 
@@ -31,7 +33,7 @@ public class PersonRepositoryImpl implements PersonRepository {
     @Override
     public boolean delete(Long id) {
         Person person = getById(id);
-        if (person != null) {
+        if (nonNull(person)) {
             entityManager.remove(person);
             return true;
         }

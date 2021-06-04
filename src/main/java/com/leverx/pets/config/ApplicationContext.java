@@ -18,6 +18,8 @@ import javax.servlet.ServletContextListener;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import static java.util.Objects.nonNull;
+
 public class ApplicationContext implements ServletContextListener {
 
     private static final Logger log = Logger.getLogger(ApplicationContext.class);
@@ -56,8 +58,10 @@ public class ApplicationContext implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         log.info("ServletContextListener destroyed");
-        entityManager.close();
-        entityManager.getEntityManagerFactory().close();
+        if (nonNull(entityManager)) {
+            entityManager.close();
+            entityManager.getEntityManagerFactory().close();
+        }
     }
 
     private void initBeans() {
@@ -75,7 +79,7 @@ public class ApplicationContext implements ServletContextListener {
 
     private void initServices() {
         personService = new PersonServiceImpl(personRepository, entityManager, objectMapper, validator);
-        petService = new PetServiceImpl(petRepository, personRepository, entityManager, objectMapper);
+        petService = new PetServiceImpl(petRepository, personRepository, entityManager, objectMapper, validator);
     }
 
     private void initEntityManager() {
