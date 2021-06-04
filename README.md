@@ -3,7 +3,7 @@
 
 ## Requirements
 * Java 1.8
-* Maven
+* Maven 3.8.1
 * Tomcat 8.5.66
 
 
