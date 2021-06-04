@@ -1,5 +1,12 @@
 # pets
 
+
+## Requirements
+* Java 1.8
+* Maven
+* Tomcat 8.5.66
+
+
 1) никакого спринга
 2) servlet API, tomcat
 3) JPA, Hibernate
