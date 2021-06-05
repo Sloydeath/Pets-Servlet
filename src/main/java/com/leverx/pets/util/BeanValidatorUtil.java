@@ -5,7 +5,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.Set;
 
-public class BeanValidator {
+public class BeanValidatorUtil {
 
     public static <T> void validateBean(T bean, Validator validator) {
         Set<ConstraintViolation<T>> violations = validator.validate(bean);

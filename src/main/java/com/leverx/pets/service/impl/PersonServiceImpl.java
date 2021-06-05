@@ -17,7 +17,7 @@ import java.util.List;
 import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
 import static com.leverx.pets.util.StringConstantsUtil.FALSE;
 import static com.leverx.pets.util.StringConstantsUtil.TRUE;
-import static com.leverx.pets.util.BeanValidator.validateBean;
+import static com.leverx.pets.util.BeanValidatorUtil.validateBean;
 import static java.util.Objects.nonNull;
 
 

@@ -83,7 +83,7 @@ public class ApplicationContext implements ServletContextListener {
     }
 
     private void initEntityManager() {
-        entityManager = EntityManagerFactoryUtil.entityManager();
+        entityManager = EntityManagerFactoryConfig.entityManager();
     }
 
     private void initUtil() {

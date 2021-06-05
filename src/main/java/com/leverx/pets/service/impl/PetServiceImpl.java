@@ -21,7 +21,7 @@ import static com.leverx.pets.factory.PetFactory.getPet;
 import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
 import static com.leverx.pets.util.StringConstantsUtil.FALSE;
 import static com.leverx.pets.util.StringConstantsUtil.TRUE;
-import static com.leverx.pets.util.BeanValidator.validateBean;
+import static com.leverx.pets.util.BeanValidatorUtil.validateBean;
 import static java.util.Objects.nonNull;
 
 public class PetServiceImpl implements PetService {

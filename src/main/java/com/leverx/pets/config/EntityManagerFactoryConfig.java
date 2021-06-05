@@ -6,8 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class EntityManagerFactoryUtil {
-    private static final Logger log = Logger.getLogger(EntityManagerFactoryUtil.class);
+public class EntityManagerFactoryConfig {
+    private static final Logger log = Logger.getLogger(EntityManagerFactoryConfig.class);
 
     private static EntityManagerFactory entityManagerFactory() {
         log.info("Creation of entityManagerFactory");

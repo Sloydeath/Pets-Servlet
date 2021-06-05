@@ -1,4 +1,4 @@
-package com.leverx.pets.util;
+package com.leverx.pets.parser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

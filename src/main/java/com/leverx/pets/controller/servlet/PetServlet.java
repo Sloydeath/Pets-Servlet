@@ -14,7 +14,7 @@ import java.util.List;
 import static com.leverx.pets.util.JsonUtil.sendJsonResponse;
 import static com.leverx.pets.util.StringConstantsUtil.URL_DELIMITER;
 import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
-import static com.leverx.pets.util.UrlParser.getPathInfo;
+import static com.leverx.pets.parser.UrlParser.getPathInfo;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.nonNull;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
