@@ -5,6 +5,7 @@
 * Java 1.8
 * Maven 3.8.1
 * Tomcat 8.5.66
+* PostgreSQL
 
 
 1) никакого спринга
