@@ -5,10 +5,12 @@ import com.leverx.pets.repository.PersonRepository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Objects.nonNull;
 
 public class PersonRepositoryImpl implements PersonRepository {
+
     private final EntityManager entityManager;
 
     public PersonRepositoryImpl(EntityManager entityManager) {
@@ -16,8 +18,9 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public void create(Person person) {
+    public Person create(Person person) {
         entityManager.persist(person);
+        return person;
     }
 
     @Override
@@ -26,24 +29,29 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public Person getById(Long id) {
-        return entityManager.find(Person.class, id);
+    public Optional<Person> getById(Long id) {
+        return Optional.ofNullable(entityManager.find(Person.class, id));
     }
 
     @Override
-    public boolean delete(Long id) {
-        Person person = getById(id);
+    public void delete(Long id) {
+        Person person = entityManager.find(Person.class, id);
         if (nonNull(person)) {
             entityManager.remove(person);
-            return true;
         }
-        return false;
+        else {
+            throw new IllegalArgumentException(String.format("Person with ID %d doesn't exist or ID is incorrect", id));
+        }
     }
 
     @Override
-    public void update(Person person) {
-        Person currentPerson = getById(person.getId());
-        currentPerson.setName(person.getName());
-        currentPerson.setPets(person.getPets());
+    public Person update(Person person) {
+        Person currentPerson = entityManager.find(Person.class, person.getId());
+        if (nonNull(currentPerson)) {
+            currentPerson.setName(person.getName());
+            currentPerson.setPets(person.getPets());
+            return currentPerson;
+        }
+        throw new IllegalArgumentException(String.format("Person with ID %d doesn't exist or ID is incorrect", person.getId()));
     }
 }

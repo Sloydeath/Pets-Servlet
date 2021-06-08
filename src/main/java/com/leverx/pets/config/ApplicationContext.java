@@ -37,6 +37,7 @@ public class ApplicationContext implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         initBeans();
         ServletContext servletContext = sce.getServletContext();
+
         //set Utils beans
         servletContext.setAttribute(ObjectMapper.class.getName(), objectMapper);
         servletContext.setAttribute(Validator.class.getName(), validator);

@@ -38,11 +38,4 @@ public class Person {
     @OneToMany(mappedBy = "person", cascade = {ALL, REMOVE}, fetch = LAZY)
     private List<Pet> pets;
 
-    @Override
-    public String toString() {
-        return "{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

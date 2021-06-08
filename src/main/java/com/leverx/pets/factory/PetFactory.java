@@ -1,5 +1,6 @@
 package com.leverx.pets.factory;
 
+import com.leverx.pets.exception.EntityNotFoundException;
 import com.leverx.pets.model.pet.Cat;
 import com.leverx.pets.model.pet.Dog;
 import com.leverx.pets.model.pet.Pet;
@@ -13,7 +14,7 @@ public class PetFactory {
             case DOG:
                 return new Dog();
             default:
-                return null;
+                throw new EntityNotFoundException("Pet not found");
         }
     }
 }

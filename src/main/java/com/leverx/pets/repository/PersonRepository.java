@@ -3,11 +3,12 @@ package com.leverx.pets.repository;
 import com.leverx.pets.model.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PersonRepository {
-    void create(Person person);
+    Person create(Person person);
     List<Person> getAll();
-    Person getById(Long id);
-    boolean delete(Long id);
-    void update(Person person);
+    Optional<Person> getById(Long id);
+    void delete(Long id);
+    Person update(Person person);
 }

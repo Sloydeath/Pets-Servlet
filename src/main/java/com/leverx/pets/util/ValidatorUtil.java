@@ -5,10 +5,10 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.Set;
 
-public class BeanValidatorUtil {
+public class ValidatorUtil {
 
-    public static <T> void validateBean(T bean, Validator validator) {
-        Set<ConstraintViolation<T>> violations = validator.validate(bean);
+    public static <T> void validateData(T data, Validator validator) {
+        Set<ConstraintViolation<T>> violations = validator.validate(data);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }

@@ -1,5 +1,10 @@
 package com.leverx.pets.controller.servlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leverx.pets.dto.PersonDto;
+import com.leverx.pets.exception.EntityNotFoundException;
+import com.leverx.pets.model.Person;
+import com.leverx.pets.parser.UrlParser;
 import com.leverx.pets.service.PersonService;
 
 import javax.servlet.ServletContext;
@@ -11,12 +16,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-import static com.leverx.pets.util.JsonUtil.sendJsonResponse;
-import static com.leverx.pets.util.StringConstantsUtil.URL_DELIMITER;
+import static com.leverx.pets.util.JsonResponseSenderUtil.sendJsonResponse;
 import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
 import static com.leverx.pets.parser.UrlParser.getPathInfo;
 import static java.lang.Long.parseLong;
-import static java.util.Objects.nonNull;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -25,86 +28,111 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class PersonServlet extends HttpServlet {
 
     private PersonService personService;
+    private ObjectMapper objectMapper;
 
     @Override
     public void init() {
         ServletContext context = getServletContext();
         personService = (PersonService) context.getAttribute(PersonService.class.getName());
+        objectMapper = (ObjectMapper) context.getAttribute(ObjectMapper.class.getName());
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<String> url = getPathInfo(request);
-        if (!url.isEmpty() && URL_DELIMITER.equals(url.get(0)) && url.size() == 1) {
-            String people = personService.getAllPeople();
-            sendJsonResponse(people, response);
-        }
-        else if (url.size() == 2) {
-            String person = personService.getPersonById(parseLong(url.get(1)));
-            if (nonNull(person) && !EMPTY.equals(person)) {
-                sendJsonResponse(person, response);
+
+        try {
+            String endpoint = getPathInfo(request);
+            if (EMPTY.equals(endpoint)) {
+                doGetAllPeople(response, endpoint);
             }
             else {
-                response.sendError(SC_NOT_FOUND);
+                doGetPersonById(response, endpoint);
             }
+        } catch (IllegalArgumentException ex) {
+            response.sendError(SC_NOT_FOUND, ex.getMessage());
         }
-        else {
-            response.sendError(SC_NOT_FOUND);
+    }
+
+    private void doGetAllPeople(HttpServletResponse response, String endpoint) throws IOException {
+
+        try {
+            UrlParser.endpointEmptyIsValid(endpoint);
+
+            List<Person> people = personService.getAllPeople();
+            sendJsonResponse(objectMapper.writeValueAsString(people), response);
+
+        } catch (EntityNotFoundException entityNotFoundException) {
+            response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
+        } catch (IllegalArgumentException illegalArgumentException) {
+            response.sendError(SC_BAD_REQUEST, illegalArgumentException.getMessage());
+        }
+
+    }
+
+    private void doGetPersonById(HttpServletResponse response, String endpoint) throws IOException {
+
+        try {
+            UrlParser.endpointWithIdIsValid(endpoint);
+
+            Person person = personService.getPersonById(parseLong(endpoint));
+            sendJsonResponse(objectMapper.writeValueAsString(person), response);
+
+        } catch (EntityNotFoundException entityNotFoundException) {
+            response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
+        } catch (IllegalArgumentException illegalArgumentException) {
+            response.sendError(SC_BAD_REQUEST, illegalArgumentException.getMessage());
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<String> url = getPathInfo(request);
-        if (!url.isEmpty() &&
-                URL_DELIMITER.equals(url.get(0))
-                && url.size() == 1) {
+
+        try {
+            String endpoint = getPathInfo(request);
+            UrlParser.endpointEmptyIsValid(endpoint);
+
             BufferedReader personJsonRequest = request.getReader();
-            boolean isCreate = personService.createPerson(personJsonRequest);
-            if (isCreate) {
-                response.setStatus(SC_OK);
-            }
-            else {
-                response.setStatus(SC_BAD_REQUEST);
-            }
-        }
-        else {
-            response.sendError(SC_BAD_REQUEST);
+            PersonDto personDto = objectMapper.readValue(personJsonRequest, PersonDto.class);
+            Person person = personService.createPerson(personDto);
+
+            sendJsonResponse(objectMapper.writeValueAsString(person), response);
+
+        } catch (IllegalArgumentException ex) {
+            response.sendError(SC_BAD_REQUEST, ex.getMessage());
         }
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<String> url = getPathInfo(request);
-        if (url.size() == 2) {
+
+        try {
+            String endpoint = getPathInfo(request);
+            UrlParser.endpointWithIdIsValid(endpoint);
+
             BufferedReader personJsonRequest = request.getReader();
-            boolean isUpdate = personService.updatePerson(personJsonRequest, parseLong(url.get(1)));
-            if (isUpdate) {
-                response.setStatus(SC_OK);
-            }
-            else {
-                response.setStatus(SC_BAD_REQUEST);
-            }
-        }
-        else {
-            response.sendError(SC_BAD_REQUEST);
+            PersonDto personDto = objectMapper.readValue(personJsonRequest, PersonDto.class);
+            Person person = personService.updatePerson(personDto, parseLong(endpoint));
+
+            sendJsonResponse(objectMapper.writeValueAsString(person), response);
+
+        } catch (IllegalArgumentException ex) {
+            response.sendError(SC_BAD_REQUEST, ex.getMessage());
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<String> url = getPathInfo(request);
-        if (url.size() == 2) {
-            boolean isDelete = personService.deletePersonById(parseLong(url.get(1)));
-            if (isDelete) {
-                response.setStatus(SC_OK);
-            }
-            else {
-                response.setStatus(SC_BAD_REQUEST);
-            }
-        }
-        else {
-            response.sendError(SC_BAD_REQUEST);
+
+        try {
+            String endpoint = getPathInfo(request);
+            UrlParser.endpointWithIdIsValid(endpoint);
+
+            personService.deletePersonById(parseLong(endpoint));
+
+            response.setStatus(SC_OK);
+
+        } catch (IllegalArgumentException ex) {
+            response.sendError(SC_BAD_REQUEST, ex.getMessage());
         }
     }
 }

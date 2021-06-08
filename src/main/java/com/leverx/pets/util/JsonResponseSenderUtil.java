@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-public class JsonUtil {
+public class JsonResponseSenderUtil {
 
     public static void sendJsonResponse(String jsonResponse, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");

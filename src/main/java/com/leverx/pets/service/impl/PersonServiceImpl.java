@@ -6,20 +6,14 @@ import com.leverx.pets.exception.EntityNotFoundException;
 import com.leverx.pets.model.Person;
 import com.leverx.pets.repository.PersonRepository;
 import com.leverx.pets.service.PersonService;
+import com.leverx.pets.util.ValidatorUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.validation.Validator;
-import java.io.BufferedReader;
 import java.util.List;
-
-import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
-import static com.leverx.pets.util.StringConstantsUtil.FALSE;
-import static com.leverx.pets.util.StringConstantsUtil.TRUE;
-import static com.leverx.pets.util.BeanValidatorUtil.validateBean;
-import static java.util.Objects.nonNull;
-
 
 public class PersonServiceImpl implements PersonService {
 
@@ -37,93 +31,76 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public boolean createPerson(BufferedReader personJson) {
-        EntityTransaction et = entityManager.getTransaction();
+    public Person createPerson(PersonDto personDto) {
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            et.begin();
-            PersonDto personDto = objectMapper.readValue(personJson, PersonDto.class);
-            validateBean(personDto, validator);
-            personRepository.create(objectMapper.convertValue(personDto, Person.class));
-            et.commit();
-            return TRUE;
+            transaction.begin();
+            ValidatorUtil.validateData(personDto, validator);
+            Person person = objectMapper.convertValue(personDto, Person.class);
+            personRepository.create(person);
+            transaction.commit();
+            return person;
         } catch (Exception ex) {
             log.error("Exception while execution of createPerson: " + ex);
-            et.rollback();
-            return FALSE;
+            transaction.rollback();
+            throw new IllegalArgumentException("Person isn't saved: " + ex);
         }
     }
 
     @Override
-    public String getAllPeople() {
-        EntityTransaction et = entityManager.getTransaction();
-        try {
-            et.begin();
-            List<Person> people = personRepository.getAll();
-            et.commit();
-            return objectMapper.writeValueAsString(people);
-        } catch (Exception ex) {
-            log.error("Exception while execution of getAllPeople: " + ex);
-            et.rollback();
-            return EMPTY;
+    public List<Person> getAllPeople() {
+        List<Person> people = personRepository.getAll();
+        if (!people.isEmpty()) {
+            return people;
+        }
+        else {
+            log.error("Exception while execution of getAllPeople: People aren't found");
+            throw new EntityNotFoundException("People aren't found");
         }
     }
 
     @Override
-    public String getPersonById(Long id) {
-        EntityTransaction et = entityManager.getTransaction();
-        try {
-            et.begin();
-            Person person = personRepository.getById(id);
-            et.commit();
-            if (nonNull(person)) {
-                return objectMapper.writeValueAsString(person);
-            }
-            else {
-                return EMPTY;
-            }
-        } catch (Exception ex) {
-            log.error("Exception while execution of getPersonById: " + ex);
-            et.rollback();
-            return EMPTY;
+    public Person getPersonById(Long id) {
+        if (personRepository.getById(id).isPresent()) {
+            return personRepository.getById(id).get();
+        }
+        else {
+            log.error("Exception while execution of getPersonById: Person isn't found");
+            throw new EntityNotFoundException("Person isn't found");
         }
     }
 
     @Override
-    public boolean deletePersonById(Long id) {
-        EntityTransaction et = entityManager.getTransaction();
+    public void deletePersonById(Long id) {
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            et.begin();
-            boolean isDelete = personRepository.delete(id);
-            et.commit();
-            return isDelete;
+            transaction.begin();
+            personRepository.delete(id);
+            transaction.commit();
         } catch (Exception ex) {
             log.error("Exception while execution of deletePersonById: " + ex);
-            et.rollback();
-            return FALSE;
+            transaction.rollback();
+            throw new IllegalArgumentException("Person isn't deleted");
         }
     }
 
     @Override
-    public boolean updatePerson(BufferedReader personJson, Long id) {
-        EntityTransaction et = entityManager.getTransaction();
+    public Person updatePerson(PersonDto personDto, Long id) {
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            et.begin();
-            Person person = personRepository.getById(id);
-            if (nonNull(person)) {
-                PersonDto personDto = objectMapper.readValue(personJson, PersonDto.class);
-                validateBean(personDto, validator);
-                person.setName(personDto.getName());
-                personRepository.update(person);
-                et.commit();
-                return TRUE;
-            }
-            else {
-                throw new EntityNotFoundException("Person doesn't exist");
-            }
+            transaction.begin();
+            ValidatorUtil.validateData(personDto, validator);
+            Person person = personRepository
+                    .getById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Person doesn't exist"));
+            person.setName(personDto.getName());
+            personRepository.update(person);
+            transaction.commit();
+            return person;
         } catch (Exception ex) {
             log.error("Exception while execution of updatePerson: " + ex);
-            et.rollback();
-            return FALSE;
+            transaction.rollback();
+            throw new IllegalArgumentException("Person isn't updated");
         }
     }
 }

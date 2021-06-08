@@ -47,15 +47,6 @@ public abstract class Pet {
     @JoinColumn(name = "owner_id")
     private Person person;
 
-    @Override
-    public String toString() {
-        return "Pet{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", person=" + person +
-                '}';
-    }
-
     @Transient
     public String getPetType() {
         return this.getClass().getAnnotation(DiscriminatorValue.class).value();
