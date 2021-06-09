@@ -26,6 +26,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name = "person")
 public class Person {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

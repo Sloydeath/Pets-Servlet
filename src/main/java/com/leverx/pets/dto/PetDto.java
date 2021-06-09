@@ -11,7 +11,9 @@ import javax.validation.constraints.Positive;
 @Valid
 @Data
 public class PetDto {
+
     private Long id;
+
     @ValidName
     private String name;
 

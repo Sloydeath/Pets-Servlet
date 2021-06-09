@@ -8,7 +8,9 @@ import javax.validation.Valid;
 @Valid
 @Data
 public class PersonDto {
+
     private Long id;
+
     @ValidName
     private String name;
 }

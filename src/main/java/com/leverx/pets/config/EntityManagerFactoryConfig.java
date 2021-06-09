@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 public class EntityManagerFactoryConfig {
+
     private static final Logger log = Logger.getLogger(EntityManagerFactoryConfig.class);
 
     private static EntityManagerFactory entityManagerFactory() {

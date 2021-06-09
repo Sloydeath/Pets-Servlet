@@ -7,7 +7,9 @@ import com.leverx.pets.model.pet.Pet;
 import com.leverx.pets.model.pet.enums.PetType;
 
 public class PetFactory {
+
     public static Pet getPet(PetType petType) {
+
         switch (petType) {
             case CAT:
                 return new Cat();

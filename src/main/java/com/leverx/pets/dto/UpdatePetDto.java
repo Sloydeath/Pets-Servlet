@@ -10,9 +10,12 @@ import javax.validation.Valid;
 @Valid
 @Data
 public class UpdatePetDto {
+
     private Long id;
+
     @ValidName
     private String name;
+
     private PetType petType;
     private Person person;
 }

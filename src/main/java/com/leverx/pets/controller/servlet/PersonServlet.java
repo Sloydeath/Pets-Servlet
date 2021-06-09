@@ -59,10 +59,13 @@ public class PersonServlet extends HttpServlet {
             UrlParser.endpointEmptyIsValid(endpoint);
 
             List<Person> people = personService.getAllPeople();
-            sendJsonResponse(objectMapper.writeValueAsString(people), response);
+
+            String peopleJsonResponse = objectMapper.writeValueAsString(people);
+            sendJsonResponse(peopleJsonResponse, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
+
         } catch (IllegalArgumentException illegalArgumentException) {
             response.sendError(SC_BAD_REQUEST, illegalArgumentException.getMessage());
         }
@@ -75,10 +78,13 @@ public class PersonServlet extends HttpServlet {
             UrlParser.endpointWithIdIsValid(endpoint);
 
             Person person = personService.getPersonById(parseLong(endpoint));
-            sendJsonResponse(objectMapper.writeValueAsString(person), response);
+
+            String personJsonResponse = objectMapper.writeValueAsString(person);
+            sendJsonResponse(personJsonResponse, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
+
         } catch (IllegalArgumentException illegalArgumentException) {
             response.sendError(SC_BAD_REQUEST, illegalArgumentException.getMessage());
         }
@@ -95,7 +101,8 @@ public class PersonServlet extends HttpServlet {
             PersonDto personDto = objectMapper.readValue(personJsonRequest, PersonDto.class);
             Person person = personService.createPerson(personDto);
 
-            sendJsonResponse(objectMapper.writeValueAsString(person), response);
+            String personJsonResponse = objectMapper.writeValueAsString(person);
+            sendJsonResponse(personJsonResponse, response);
 
         } catch (IllegalArgumentException ex) {
             response.sendError(SC_BAD_REQUEST, ex.getMessage());
@@ -110,10 +117,12 @@ public class PersonServlet extends HttpServlet {
             UrlParser.endpointWithIdIsValid(endpoint);
 
             BufferedReader personJsonRequest = request.getReader();
+
             PersonDto personDto = objectMapper.readValue(personJsonRequest, PersonDto.class);
             Person person = personService.updatePerson(personDto, parseLong(endpoint));
 
-            sendJsonResponse(objectMapper.writeValueAsString(person), response);
+            String personJsonResponse = objectMapper.writeValueAsString(person);
+            sendJsonResponse(personJsonResponse, response);
 
         } catch (IllegalArgumentException ex) {
             response.sendError(SC_BAD_REQUEST, ex.getMessage());

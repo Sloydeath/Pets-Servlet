@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PetRepository {
+
     Pet create(Pet pet);
     List<Pet> getAll();
     Optional<Pet> getById(Long id);

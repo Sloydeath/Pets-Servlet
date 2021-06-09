@@ -80,7 +80,7 @@ public class ApplicationContext implements ServletContextListener {
 
     private void initServices() {
         personService = new PersonServiceImpl(personRepository, entityManager, objectMapper, validator);
-        petService = new PetServiceImpl(petRepository, personRepository, entityManager, objectMapper, validator);
+        petService = new PetServiceImpl(petRepository, personRepository, entityManager, validator);
     }
 
     private void initEntityManager() {

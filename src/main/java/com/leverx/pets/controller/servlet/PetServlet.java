@@ -60,7 +60,9 @@ public class PetServlet extends HttpServlet {
             UrlParser.endpointEmptyIsValid(endpoint);
 
             List<Pet> pets = petService.getAllPets();
-            sendJsonResponse(objectMapper.writeValueAsString(pets), response);
+
+            String petsJsonResponse = objectMapper.writeValueAsString(pets);
+            sendJsonResponse(petsJsonResponse, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
@@ -77,7 +79,9 @@ public class PetServlet extends HttpServlet {
             UrlParser.endpointWithIdIsValid(endpoint);
 
             Pet pet = petService.getPetById(parseLong(endpoint));
-            sendJsonResponse(objectMapper.writeValueAsString(pet), response);
+
+            String petJsonResponse = objectMapper.writeValueAsString(pet);
+            sendJsonResponse(petJsonResponse, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
@@ -98,7 +102,8 @@ public class PetServlet extends HttpServlet {
             PetDto petDto = objectMapper.readValue(petJsonRequest, PetDto.class);
             Pet pet = petService.createPet(petDto);
 
-            sendJsonResponse(objectMapper.writeValueAsString(pet), response);
+            String petJsonResponse = objectMapper.writeValueAsString(pet);
+            sendJsonResponse(petJsonResponse, response);
 
         } catch (IllegalArgumentException illegalArgumentException) {
             response.sendError(SC_BAD_REQUEST, illegalArgumentException.getMessage());
@@ -117,15 +122,17 @@ public class PetServlet extends HttpServlet {
 
             BufferedReader petJsonRequest = request.getReader();
             UpdatePetDto updatePetDto = objectMapper.readValue(petJsonRequest, UpdatePetDto.class);
+
             Pet pet = petService.updatePet(updatePetDto, parseLong(endpoint));
 
-            sendJsonResponse(objectMapper.writeValueAsString(pet), response);
+            String petJsonResponse = objectMapper.writeValueAsString(pet);
+            sendJsonResponse(petJsonResponse, response);
+
         } catch (IllegalArgumentException ex) {
             response.sendError(SC_BAD_REQUEST, ex.getMessage());
         }
     }
 
-    // pets/{id}
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
 

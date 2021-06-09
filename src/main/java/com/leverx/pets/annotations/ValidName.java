@@ -18,6 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = NameValidator.class)
 @Documented
 public @interface ValidName {
+
     String message() default "Invalid name";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

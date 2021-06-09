@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PersonRepository {
+
     Person create(Person person);
     List<Person> getAll();
     Optional<Person> getById(Long id);

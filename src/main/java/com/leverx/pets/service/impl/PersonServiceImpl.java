@@ -7,7 +7,6 @@ import com.leverx.pets.model.Person;
 import com.leverx.pets.repository.PersonRepository;
 import com.leverx.pets.service.PersonService;
 import com.leverx.pets.util.ValidatorUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;

@@ -1,6 +1,5 @@
 package com.leverx.pets.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leverx.pets.dto.PetDto;
 import com.leverx.pets.dto.UpdatePetDto;
 import com.leverx.pets.exception.EntityNotFoundException;
@@ -27,7 +26,7 @@ public class PetServiceImpl implements PetService {
     private final EntityManager entityManager;
     private final Validator validator;
 
-    public PetServiceImpl(PetRepository petRepository, PersonRepository personRepository, EntityManager entityManager, ObjectMapper objectMapper, Validator validator) {
+    public PetServiceImpl(PetRepository petRepository, PersonRepository personRepository, EntityManager entityManager, Validator validator) {
         this.petRepository = petRepository;
         this.personRepository = personRepository;
         this.entityManager = entityManager;
