@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Andrew\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Newwwww\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -61,7 +61,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/people/3",
+							"raw": "http://localhost:8080/people/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -69,7 +69,7 @@
 							"port": "8080",
 							"path": [
 								"people",
-								"3"
+								"1"
 							]
 						}
 					},
@@ -82,7 +82,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Update person name\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Update\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -90,7 +90,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/people/3",
+							"raw": "http://localhost:8080/people/9",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -98,7 +98,7 @@
 							"port": "8080",
 							"path": [
 								"people",
-								"3"
+								"9"
 							]
 						}
 					},
@@ -110,7 +110,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/people/3",
+							"raw": "http://localhost:8080/people/9",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -118,7 +118,7 @@
 							"port": "8080",
 							"path": [
 								"people",
-								"3"
+								"9"
 							]
 						}
 					},
@@ -136,7 +136,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Ghost\",\r\n    \"petType\": \"CAT\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Ghostefgg\",\r\n    \"petType\": \"DOG\",\r\n    \"personId\": \"2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -144,16 +144,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/pets/person/3",
+							"raw": "http://localhost:8080/pets",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"pets",
-								"person",
-								"3"
+								"pets"
 							]
 						}
 					},
@@ -184,7 +182,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/pets/3",
+							"raw": "http://localhost:8080/pets/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -192,7 +190,7 @@
 							"port": "8080",
 							"path": [
 								"pets",
-								"3"
+								"2"
 							]
 						}
 					},
@@ -205,7 +203,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Update pet name\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Update\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -213,7 +211,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/pets/3",
+							"raw": "http://localhost:8080/pets/10",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -221,7 +219,7 @@
 							"port": "8080",
 							"path": [
 								"pets",
-								"3"
+								"10"
 							]
 						}
 					},
@@ -233,7 +231,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/pets/3",
+							"raw": "http://localhost:8080/pets/10",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -241,7 +239,7 @@
 							"port": "8080",
 							"path": [
 								"pets",
-								"3"
+								"10"
 							]
 						}
 					},

@@ -48,6 +48,7 @@ public class PersonServlet extends HttpServlet {
             else {
                 doGetPersonById(response, endpoint);
             }
+
         } catch (IllegalArgumentException ex) {
             response.sendError(SC_NOT_FOUND, ex.getMessage());
         }
