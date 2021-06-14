@@ -34,7 +34,7 @@ public class PersonServiceImpl implements PersonService {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            ValidatorUtil.validateData(personDto, validator);
+            ValidatorUtil.validate(personDto, validator);
             Person person = objectMapper.convertValue(personDto, Person.class);
             personRepository.create(person);
             transaction.commit();
@@ -88,7 +88,7 @@ public class PersonServiceImpl implements PersonService {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            ValidatorUtil.validateData(personDto, validator);
+            ValidatorUtil.validate(personDto, validator);
             Person person = personRepository
                     .getById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Person doesn't exist"));

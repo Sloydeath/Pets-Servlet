@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class ValidatorUtil {
 
-    public static <T> void validateData(T data, Validator validator) {
+    public static <T> void validate(T data, Validator validator) {
         Set<ConstraintViolation<T>> violations = validator.validate(data);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);

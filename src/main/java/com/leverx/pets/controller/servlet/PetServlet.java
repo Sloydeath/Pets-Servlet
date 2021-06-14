@@ -18,9 +18,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-import static com.leverx.pets.util.JsonResponseSenderUtil.sendJsonResponse;
-import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
+import static com.leverx.pets.util.HttpJsonUtil.jsonWrapper;
+import static com.leverx.pets.util.HttpJsonUtil.sendJsonResponse;
 import static com.leverx.pets.parser.UrlParser.getPathInfo;
+import static com.leverx.pets.util.StringConstantsUtil.URL_DELIMITER;
 import static java.lang.Long.parseLong;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -43,7 +44,7 @@ public class PetServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String endpoint = getPathInfo(request);
-            if (EMPTY.equals(endpoint)) {
+            if (URL_DELIMITER.equals(endpoint)) {
                 doGetAllPet(response, endpoint);
             }
             else {
@@ -61,8 +62,8 @@ public class PetServlet extends HttpServlet {
 
             List<Pet> pets = petService.getAllPets();
 
-            String petsJsonResponse = objectMapper.writeValueAsString(pets);
-            sendJsonResponse(petsJsonResponse, response);
+            String petsJson = jsonWrapper(pets);
+            sendJsonResponse(petsJson, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
@@ -80,8 +81,8 @@ public class PetServlet extends HttpServlet {
 
             Pet pet = petService.getPetById(parseLong(endpoint));
 
-            String petJsonResponse = objectMapper.writeValueAsString(pet);
-            sendJsonResponse(petJsonResponse, response);
+            String petJson = jsonWrapper(pet);
+            sendJsonResponse(petJson, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
@@ -102,8 +103,8 @@ public class PetServlet extends HttpServlet {
             PetDto petDto = objectMapper.readValue(petJsonRequest, PetDto.class);
             Pet pet = petService.createPet(petDto);
 
-            String petJsonResponse = objectMapper.writeValueAsString(pet);
-            sendJsonResponse(petJsonResponse, response);
+            String petJson = jsonWrapper(pet);
+            sendJsonResponse(petJson, response);
 
         } catch (IllegalArgumentException illegalArgumentException) {
             response.sendError(SC_BAD_REQUEST, illegalArgumentException.getMessage());
@@ -122,11 +123,10 @@ public class PetServlet extends HttpServlet {
 
             BufferedReader petJsonRequest = request.getReader();
             UpdatePetDto updatePetDto = objectMapper.readValue(petJsonRequest, UpdatePetDto.class);
-
             Pet pet = petService.updatePet(updatePetDto, parseLong(endpoint));
 
-            String petJsonResponse = objectMapper.writeValueAsString(pet);
-            sendJsonResponse(petJsonResponse, response);
+            String petJson = jsonWrapper(pet);
+            sendJsonResponse(petJson, response);
 
         } catch (IllegalArgumentException ex) {
             response.sendError(SC_BAD_REQUEST, ex.getMessage());

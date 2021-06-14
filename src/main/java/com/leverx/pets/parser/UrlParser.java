@@ -3,7 +3,6 @@ package com.leverx.pets.parser;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
 import static com.leverx.pets.util.StringConstantsUtil.URL_DELIMITER;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -14,7 +13,7 @@ public class UrlParser {
     public static String getPathInfo(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         if (isBlank(pathInfo) || URL_DELIMITER.equals(pathInfo)) {
-            return EMPTY;
+            return URL_DELIMITER;
         }
 
         List<String> endpoint = asList(pathInfo.split(URL_DELIMITER));
@@ -26,13 +25,13 @@ public class UrlParser {
     }
 
     public static void endpointWithIdIsValid(String endpoint) {
-        if (EMPTY.equals(endpoint)) {
+        if (URL_DELIMITER.equals(endpoint)) {
             throw new IllegalArgumentException("Incorrect URL");
         }
     }
 
     public static void endpointEmptyIsValid(String endpoint) {
-        if (!EMPTY.equals(endpoint)) {
+        if (!URL_DELIMITER.equals(endpoint)) {
             throw new IllegalArgumentException("Incorrect URL");
         }
     }

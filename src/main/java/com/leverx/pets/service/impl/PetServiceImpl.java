@@ -38,7 +38,7 @@ public class PetServiceImpl implements PetService {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            ValidatorUtil.validateData(petDto, validator);
+            ValidatorUtil.validate(petDto, validator);
             Pet pet = getPet(petDto.getPetType());
             Person person = personRepository
                     .getById(petDto.getPersonId())
@@ -97,7 +97,7 @@ public class PetServiceImpl implements PetService {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            ValidatorUtil.validateData(petDto, validator);
+            ValidatorUtil.validate(petDto, validator);
             Pet pet = petRepository
                     .getById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Pet doesn't exist"));

@@ -16,9 +16,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-import static com.leverx.pets.util.JsonResponseSenderUtil.sendJsonResponse;
-import static com.leverx.pets.util.StringConstantsUtil.EMPTY;
+import static com.leverx.pets.util.HttpJsonUtil.jsonWrapper;
+import static com.leverx.pets.util.HttpJsonUtil.sendJsonResponse;
 import static com.leverx.pets.parser.UrlParser.getPathInfo;
+import static com.leverx.pets.util.StringConstantsUtil.URL_DELIMITER;
 import static java.lang.Long.parseLong;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -42,7 +43,8 @@ public class PersonServlet extends HttpServlet {
 
         try {
             String endpoint = getPathInfo(request);
-            if (EMPTY.equals(endpoint)) {
+
+            if (URL_DELIMITER.equals(endpoint)) {
                 doGetAllPeople(response, endpoint);
             }
             else {
@@ -61,8 +63,8 @@ public class PersonServlet extends HttpServlet {
 
             List<Person> people = personService.getAllPeople();
 
-            String peopleJsonResponse = objectMapper.writeValueAsString(people);
-            sendJsonResponse(peopleJsonResponse, response);
+            String peopleJson = jsonWrapper(people);
+            sendJsonResponse(peopleJson, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
@@ -80,8 +82,8 @@ public class PersonServlet extends HttpServlet {
 
             Person person = personService.getPersonById(parseLong(endpoint));
 
-            String personJsonResponse = objectMapper.writeValueAsString(person);
-            sendJsonResponse(personJsonResponse, response);
+            String personJson = jsonWrapper(person);
+            sendJsonResponse(personJson, response);
 
         } catch (EntityNotFoundException entityNotFoundException) {
             response.sendError(SC_NOT_FOUND, entityNotFoundException.getMessage());
@@ -102,8 +104,8 @@ public class PersonServlet extends HttpServlet {
             PersonDto personDto = objectMapper.readValue(personJsonRequest, PersonDto.class);
             Person person = personService.createPerson(personDto);
 
-            String personJsonResponse = objectMapper.writeValueAsString(person);
-            sendJsonResponse(personJsonResponse, response);
+            String personJson = jsonWrapper(person);
+            sendJsonResponse(personJson, response);
 
         } catch (IllegalArgumentException ex) {
             response.sendError(SC_BAD_REQUEST, ex.getMessage());
@@ -118,12 +120,11 @@ public class PersonServlet extends HttpServlet {
             UrlParser.endpointWithIdIsValid(endpoint);
 
             BufferedReader personJsonRequest = request.getReader();
-
             PersonDto personDto = objectMapper.readValue(personJsonRequest, PersonDto.class);
             Person person = personService.updatePerson(personDto, parseLong(endpoint));
 
-            String personJsonResponse = objectMapper.writeValueAsString(person);
-            sendJsonResponse(personJsonResponse, response);
+            String personJson = jsonWrapper(person);
+            sendJsonResponse(personJson, response);
 
         } catch (IllegalArgumentException ex) {
             response.sendError(SC_BAD_REQUEST, ex.getMessage());
